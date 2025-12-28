@@ -1,32 +1,35 @@
+// app/api/admin/users/[id]/route.ts
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export const runtime = "nodejs";
 
-export async function DELETE(
+// PATCH – aktualizacja użytkownika
+export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    // Połączenie z MongoDB
+    const { id } = context.params;
+
+    const body = await req.json();
+    // body powinien zawierać pola do aktualizacji np. { email: "nowy@email.com" }
+
     const client = await clientPromise;
     const db = client.db("eKubix");
 
-    if (!db) {
-      throw new Error("MongoDB nie jest połączone");
+    const result = await db
+      .collection("users")
+      .updateOne({ _id: new ObjectId(id) }, { $set: body });
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ message: "Nie znaleziono użytkownika" }, { status: 404 });
     }
 
-    const { id } = params;
-
-    await db.collection("users").deleteOne({ _id: new ObjectId(id) });
-
-    return NextResponse.json(
-      { message: "Użytkownik został usunięty" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Użytkownik zaktualizowany" }, { status: 200 });
   } catch (err) {
-    console.error("DELETE USER ERROR:", err);
+    console.error("PATCH USER ERROR:", err);
     return NextResponse.json({ message: "Błąd serwera" }, { status: 500 });
   }
 }
