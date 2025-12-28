@@ -1,0 +1,43 @@
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+
+const JWT_SECRET = process.env.JWT_SECRET!;
+
+export const runtime = "nodejs";
+
+export async function GET() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("ekubix_token")?.value;
+
+    if (!token) {
+      return NextResponse.json({ message: "Nie jesteś zalogowany" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+
+    const client = await clientPromise;
+    const db = client.db("eKubix");
+
+    const user = await db.collection("users").findOne(
+      { _id: new ObjectId(decoded.id) },
+      { projection: { name: 1, surname: 1, school: 1 } } // <-- dodane school
+    );
+
+    if (!user) {
+      return NextResponse.json({ message: "Użytkownik nie istnieje" }, { status: 404 });
+    }
+
+    return NextResponse.json({ 
+      name: user.name, 
+      surname: user.surname, 
+      school: user.school || "" // <-- zwracamy school
+    }, { status: 200 });
+  } catch (err) {
+    console.error("API /me ERROR:", err);
+    return NextResponse.json({ message: "Błąd serwera" }, { status: 500 });
+  }
+}
