@@ -84,10 +84,15 @@ export default function SupportPage() {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  // Poprawiony useEffect: ustawienie regionów w osobnej funkcji
   useEffect(() => {
     if (isRegister) {
-      setAvailableRegions(regions[country] || ["Wybierz"]);
-      setRegion("Wybierz");
+      const updateRegions = () => {
+        const newRegions = regions[country] || ["Wybierz"];
+        setAvailableRegions(newRegions);
+        setRegion("Wybierz");
+      };
+      updateRegions();
     }
   }, [country, isRegister]);
 
@@ -135,22 +140,14 @@ export default function SupportPage() {
 
   return (
     <main className="min-h-screen bg-yellow-200 flex flex-col items-center p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-3xl bg-white p-8 rounded-xl shadow-lg space-y-4"
-      >
+      <form onSubmit={handleSubmit} className="w-full max-w-3xl bg-white p-8 rounded-xl shadow-lg space-y-4">
         <h1 className="text-3xl font-bold text-center mb-6">
           Pomoc techniczna eKubix
         </h1>
 
         {/* TYPOWY SELECT */}
         <label className="font-semibold">Wybierz typ zgłoszenia</label>
-        <select
-          className="border p-2 rounded w-full"
-          value={reason}
-          onChange={e => setReason(e.target.value)}
-          required
-        >
+        <select className="border p-2 rounded w-full" value={reason} onChange={e => setReason(e.target.value)} required>
           <option value="">Wybierz</option>
           <option>błąd techniczny</option>
           <option>zgłoszenie usterki</option>
@@ -187,7 +184,7 @@ export default function SupportPage() {
             <input type="date" className="border p-2 rounded w-full" value={birthDate} onChange={e => setBirthDate(e.target.value)} required />
             <label>Powód założenia dziennika</label>
             <input className="border p-2 rounded w-full" value={registerReason} onChange={e => setRegisterReason(e.target.value)} required />
-            <label>Ostatnie 4 cyfry PESEL</label>
+            <label>Ostatnie 4 cyfry PESEL Dyrektora</label>
             <input maxLength={4} className="border p-2 rounded w-full" value={peselDigits} onChange={e => setPeselDigits(e.target.value.replace(/\D/g,""))} required />
             <label>NIP placówki</label>
             <input maxLength={10} className="border p-2 rounded w-full" value={nip} onChange={e => setNip(e.target.value.replace(/\D/g,""))} required />
@@ -231,7 +228,7 @@ export default function SupportPage() {
         <div className="mt-4">
           <ReCAPTCHA
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-            onChange={(token: string | null) => setCaptchaToken(token)}
+            onChange={(token) => setCaptchaToken(token)}
           />
         </div>
 
