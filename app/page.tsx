@@ -92,7 +92,7 @@ export default function HomePage() {
 
         <ol className="list-decimal list-inside space-y-2 text-lg">
           <li>krok 1 Odbierz kartke od wychowawcy lub dyrektora z loginem i hasłem do dziennika.</li>
-          <li>krok 2 Kliknij poniższy przycisk "zaloguj się" i wprowadz otrzymane dane.</li>
+          <li>krok 2 Kliknij poniższy przycisk &quot;zaloguj się&quot; i wprowadz otrzymane dane.</li>
           <li>krok 3 Ciesz się dostępem do eKubix.</li>
           <li>krok 4 Nie podawaj swoich danych osobom trzecim!</li>
           <li>krok 5 Gdyby dane do logowania były niepoprawne skontaktuj się z administratorem swojej szkoły.</li>
@@ -107,7 +107,6 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Tekst dla nowych szkół */}
         <div className="mt-12 text-center text-lg">
           A może jesteś dyrektorem nowej szkoły, której szkoła nie korzysta jeszcze z naszego dziennika eKubix? W takim razie{" "}
           <Link href="/support" className="text-blue-600 hover:underline">
@@ -115,12 +114,11 @@ export default function HomePage() {
           </Link>.
         </div>
 
-        {/* Obrazek pod tekstem */}
         <div className="mt-6 flex justify-center">
           <Image
             src="/ekubix1.jpg"
             alt="ekubix1"
-            width={200} // dopasuj rozmiar według potrzeby
+            width={200}
             height={100}
             className="object-contain"
           />

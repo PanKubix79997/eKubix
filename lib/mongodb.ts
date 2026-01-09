@@ -6,7 +6,6 @@ if (!process.env.MONGODB_URI) {
 
 // Deklaracja typu dla globalnego singletonu
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
