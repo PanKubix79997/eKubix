@@ -17,6 +17,11 @@ type Message = {
   date: string;
 };
 
+type MessageResponse = {
+  messages?: Message[];
+  message?: string;
+};
+
 export default function TeacherMessagesPage() {
   const [userName, setUserName] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
@@ -30,49 +35,39 @@ export default function TeacherMessagesPage() {
   // Pobierz zalogowanego nauczyciela
   useEffect(() => {
     fetch("/api/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.name && data?.surname) {
-          setUserName(`${data.name} ${data.surname}`);
-        } else {
-          setUserName("");
-        }
-      })
+      .then(res => res.json())
+      .then(data => setUserName(`${data.name} ${data.surname}`))
       .catch(() => setUserName(""));
   }, []);
 
   // Pobierz odbiorców z tej samej szkoły
   useEffect(() => {
     fetch("/api/users/recipients-school/teacher")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && Array.isArray(data.users)) {
-          setRecipients(data.users);
-        } else {
-          setRecipients([]);
-        }
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.users)) setRecipients(data.users);
+        else setRecipients([]);
       })
       .catch(() => setRecipients([]));
   }, []);
 
-  // Pobierz odebrane wiadomości (STABILNA funkcja)
+  // Pobierz odebrane wiadomości
   const fetchInbox = useCallback(async () => {
     try {
       const res = await fetch("/api/messages/received/teacher");
-      const data = await res.json();
-
-      if (data && Array.isArray(data.messages)) {
-        setInbox(data.messages);
-      } else {
-        setInbox([]);
-      }
-    } catch {
+      const data: MessageResponse = await res.json();
+      setInbox(data.messages ?? []);
+    } catch (_) {
       setInbox([]);
     }
   }, []);
 
+  // Wywołanie fetchInbox przy mount
   useEffect(() => {
-    fetchInbox();
+    const fetchData = async () => {
+      await fetchInbox();
+    };
+    fetchData();
   }, [fetchInbox]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -95,10 +90,10 @@ export default function TeacherMessagesPage() {
         }),
       });
 
-      const data = await res.json();
+      const data: MessageResponse = await res.json();
 
       if (!res.ok) {
-        setStatusMessage(data?.message || "Błąd wysyłania wiadomości");
+        setStatusMessage(data.message || "Błąd wysyłania wiadomości");
         return;
       }
 
@@ -106,8 +101,9 @@ export default function TeacherMessagesPage() {
       setTitle("");
       setContent("");
       setSelectedRecipient("");
-      fetchInbox();
-    } catch {
+      fetchInbox(); // odśwież skrzynkę
+    } catch (err) {
+      console.error(err);
       setStatusMessage("Błąd serwera");
     }
   };
@@ -117,7 +113,6 @@ export default function TeacherMessagesPage() {
       {/* Lewa kolumna: formularz */}
       <div className="flex-1 bg-white p-6 rounded shadow">
         <h2 className="text-xl font-bold mb-4">Wyślij wiadomość</h2>
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label className="block mb-1 font-semibold">Nadawca</label>
@@ -185,35 +180,23 @@ export default function TeacherMessagesPage() {
           >
             Wyślij wiadomość
           </button>
-
-          {statusMessage && (
-            <div className="text-green-600 mt-2">{statusMessage}</div>
-          )}
+          {statusMessage && <div className="text-green-600 mt-2">{statusMessage}</div>}
         </form>
       </div>
 
       {/* Prawa kolumna: odebrane wiadomości */}
       <div className="flex-1 bg-white p-6 rounded shadow overflow-auto max-h-screen">
         <h2 className="text-xl font-bold mb-4">Odebrane wiadomości</h2>
-
         {inbox.length === 0 ? (
           <p>Brak wiadomości</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {inbox.map((msg) => (
               <li key={msg._id} className="border p-2 rounded bg-gray-50">
-                <p>
-                  <b>Nadawca:</b> {msg.senderName}
-                </p>
-                <p>
-                  <b>Data:</b> {msg.date}
-                </p>
-                <p>
-                  <b>Tytuł:</b> {msg.title}
-                </p>
-                <p>
-                  <b>Treść:</b> {msg.content}
-                </p>
+                <p><b>Nadawca:</b> {msg.senderName}</p>
+                <p><b>Data:</b> {msg.date}</p>
+                <p><b>Tytuł:</b> {msg.title}</p>
+                <p><b>Treść:</b> {msg.content}</p>
               </li>
             ))}
           </ul>

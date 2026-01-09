@@ -5,39 +5,33 @@ import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-
 export const runtime = "nodejs";
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("ekubix_token")?.value;
+    if (!token) return NextResponse.json({ message: "Nie jesteś zalogowany" }, { status: 401 });
 
-    if (!token) {
-      return NextResponse.json({ message: "Nie jesteś zalogowany" }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
 
     const client = await clientPromise;
     const db = client.db("eKubix");
 
     const user = await db.collection("users").findOne(
       { _id: new ObjectId(decoded.id) },
-      { projection: { name: 1, surname: 1, school: 1 } } // <-- dodane school
+      { projection: { name: 1, surname: 1, school: 1 } }
     );
 
-    if (!user) {
-      return NextResponse.json({ message: "Użytkownik nie istnieje" }, { status: 404 });
-    }
+    if (!user) return NextResponse.json({ message: "Użytkownik nie istnieje" }, { status: 404 });
 
-    return NextResponse.json({ 
-      name: user.name, 
-      surname: user.surname, 
-      school: user.school || "" // <-- zwracamy school
+    return NextResponse.json({
+      name: user.name,
+      surname: user.surname,
+      school: user.school || ""
     }, { status: 200 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("API /me ERROR:", err);
-    return NextResponse.json({ message: "Błąd serwera" }, { status: 500 });
+    return NextResponse.json({ message: err instanceof Error ? err.message : "Błąd serwera" }, { status: 500 });
   }
 }
