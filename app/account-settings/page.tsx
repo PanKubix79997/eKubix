@@ -28,7 +28,6 @@ export default function AccountSettingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Walidacja
     if (!oldPassword || !newPassword || !confirmPassword) {
       setStatusMessage("Uzupełnij wszystkie pola hasła.");
       setStatusType("error");
@@ -60,7 +59,6 @@ export default function AccountSettingsPage() {
         return;
       }
 
-      // ✅ SUKCES
       setStatusMessage("Hasło zostało zmienione pomyślnie.");
       setStatusType("success");
       setOldPassword("");
@@ -73,67 +71,65 @@ export default function AccountSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6">
-      <div className="bg-white p-6 rounded shadow max-w-xl mx-auto">
+    <div className="min-h-screen bg-yellow-200 p-6 text-black font-semibold">
+      <div className="bg-white p-6 rounded shadow max-w-xl mx-auto text-black font-semibold">
         <h2 className="text-lg font-bold mb-6">Ustawienia konta</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Imię i nazwisko */}
           <div>
-            <label className="block font-semibold mb-1">Imię i nazwisko</label>
+            <label className="block font-bold mb-1">
+              Imię i nazwisko
+            </label>
             <input
               type="text"
               value={fullName}
               readOnly
-              className="p-2 border w-full rounded bg-gray-100"
+              className="p-2 border w-full rounded bg-gray-100 font-semibold text-black"
             />
           </div>
 
-          {/* Stare hasło */}
           <div>
-            <label className="block font-semibold mb-1">Stare hasło</label>
+            <label className="block font-bold mb-1">Stare hasło</label>
             <input
               type="password"
               value={oldPassword}
               onChange={e => setOldPassword(e.target.value)}
-              className="p-2 border w-full rounded"
+              className="p-2 border w-full rounded font-semibold text-black"
             />
           </div>
 
-          {/* Nowe hasło */}
           <div>
-            <label className="block font-semibold mb-1">Nowe hasło</label>
+            <label className="block font-bold mb-1">Nowe hasło</label>
             <input
               type="password"
               value={newPassword}
               onChange={e => setNewPassword(e.target.value)}
-              className="p-2 border w-full rounded"
+              className="p-2 border w-full rounded font-semibold text-black"
             />
           </div>
 
-          {/* Potwierdzenie */}
           <div>
-            <label className="block font-semibold mb-1">
+            <label className="block font-bold mb-1">
               Potwierdź nowe hasło
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
-              className="p-2 border w-full rounded"
+              className="p-2 border w-full rounded font-semibold text-black"
             />
           </div>
 
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold"
           >
             Zmień hasło
           </button>
 
           {statusMessage && (
             <div
-              className={`text-center text-sm mt-2 ${
+              className={`text-center text-sm mt-2 font-bold ${
                 statusType === "success"
                   ? "text-green-600"
                   : "text-red-600"
@@ -146,7 +142,7 @@ export default function AccountSettingsPage() {
 
         <button
           onClick={() => router.back()}
-          className="mt-6 text-sm text-blue-600 hover:underline"
+          className="mt-6 text-sm text-blue-600 hover:underline font-bold"
         >
           ← Wróć
         </button>

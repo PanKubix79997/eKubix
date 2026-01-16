@@ -5,14 +5,22 @@ import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
+
 export const runtime = "nodejs";
 
+interface JwtPayload {
+  id: string;
+  role: string;
+}
+
 interface Grade {
+  _id: ObjectId;
+  studentId: ObjectId;
   subject: string;
-  grade: string | number;
-  date: string;
-  title: string;
-  content: string;
+  grade: string;
+  title?: string;
+  content?: string;
+  createdAt: Date;
 }
 
 export async function GET() {
@@ -21,9 +29,9 @@ export async function GET() {
     const token = cookieStore.get("ekubix_token")?.value;
     if (!token) return NextResponse.json({ message: "Nie jesteś zalogowany" }, { status: 401 });
 
-    let payload: { id: string; role: string };
+    let payload: JwtPayload;
     try {
-      payload = jwt.verify(token, JWT_SECRET) as { id: string; role: string };
+      payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
     } catch {
       return NextResponse.json({ message: "Nieprawidłowy token" }, { status: 401 });
     }
@@ -32,12 +40,16 @@ export async function GET() {
     const db = client.db("eKubix");
 
     const studentId = new ObjectId(payload.id);
-    const rawGrades = await db.collection("grades").find({ studentId }).sort({ createdAt: -1 }).toArray();
 
-    const grades: Grade[] = rawGrades.map(g => ({
+    const rawGrades = await db.collection<Grade>("grades")
+      .find({ studentId })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    const grades = rawGrades.map(g => ({
       subject: g.subject,
       grade: g.grade,
-      date: g.createdAt instanceof Date ? g.createdAt.toISOString().split("T")[0] : "-",
+      date: g.createdAt.toISOString().split("T")[0],
       title: g.title || "-",
       content: g.content || "-",
     }));
@@ -45,6 +57,7 @@ export async function GET() {
     return NextResponse.json({ grades }, { status: 200 });
   } catch (err: unknown) {
     console.error("Błąd w /api/grades/received:", err);
-    return NextResponse.json({ message: err instanceof Error ? err.message : "Błąd serwera" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Błąd serwera";
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

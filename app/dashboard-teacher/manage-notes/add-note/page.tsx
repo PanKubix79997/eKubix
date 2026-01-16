@@ -28,30 +28,26 @@ export default function AddNotesPage() {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
-  // Pobierz dane ucznia i nauczyciela
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // Pobranie ucznia
         const studentRes = await fetch(`/api/teacher/students?class=${selectedClass}`);
         const studentData = await studentRes.json();
-        const foundStudent = studentData.students.find((s: Student) => s._id === studentId);
+        const foundStudent = studentData.students.find(
+          (s: Student) => s._id === studentId
+        );
         setStudent(foundStudent || null);
 
-        // Pobranie nauczyciela
         const teacherRes = await fetch("/api/me");
         const teacherData = await teacherRes.json();
         if (teacherData.name && teacherData.surname) {
-          setTeacher({
-            name: teacherData.name,
-            surname: teacherData.surname
-          });
+          setTeacher({ name: teacherData.name, surname: teacherData.surname });
         } else {
           setTeacher(null);
         }
-      } catch (err) {
+      } catch {
         setStudent(null);
         setTeacher(null);
       } finally {
@@ -77,7 +73,7 @@ export default function AddNotesPage() {
           type,
           content,
           date: new Date().toISOString(),
-          teacher: { name: teacher.name, surname: teacher.surname }
+          teacher: { name: teacher.name, surname: teacher.surname },
         }),
       });
 
@@ -102,45 +98,56 @@ export default function AddNotesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center text-black font-semibold">
         Ładowanie danych...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6">
-      <h1 className="text-xl font-bold mb-4">Dodaj uwagę</h1>
+    <div className="min-h-screen bg-yellow-200 p-6 text-black font-semibold">
+      <h1 className="text-xl font-bold mb-4 text-black">
+        Dodaj uwagę
+      </h1>
 
       {student ? (
-        <div className="mb-4">
-          <div>Uczeń: <b>{student.name} {student.surname}</b></div>
-          <div>Klasa: <b>{selectedClass}</b></div>
+        <div className="mb-4 font-semibold text-black">
+          <div>
+            Uczeń: <b className="font-bold">{student.name} {student.surname}</b>
+          </div>
+          <div>
+            Klasa: <b className="font-bold">{selectedClass}</b>
+          </div>
         </div>
       ) : (
-        <div className="mb-4 text-red-600">Nie znaleziono ucznia.</div>
+        <div className="mb-4 text-red-600 font-bold">
+          Nie znaleziono ucznia.
+        </div>
       )}
 
       {teacher && (
-        <div className="mb-4">
-          Nauczyciel: <b>{teacher.name} {teacher.surname}</b>
+        <div className="mb-4 font-semibold text-black">
+          Nauczyciel: <b className="font-bold">{teacher.name} {teacher.surname}</b>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 max-w-md font-semibold text-black"
+      >
         <input
           type="text"
           placeholder="Tytuł uwagi"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
           required
         />
 
         <select
           value={type}
           onChange={e => setType(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
         >
           <option value="pozytywna">Pozytywna</option>
           <option value="negatywna">Negatywna</option>
@@ -150,29 +157,34 @@ export default function AddNotesPage() {
           placeholder="Treść uwagi"
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
           rows={5}
           required
         />
 
-        {/* Pole nauczyciela – tylko do podglądu */}
         <input
           type="text"
           value={teacher ? `${teacher.name} ${teacher.surname}` : ""}
-          className="p-2 rounded border bg-gray-100 cursor-not-allowed"
           readOnly
+          className="p-2 rounded border bg-gray-100 cursor-not-allowed font-semibold text-black"
         />
 
         <button
           type="submit"
           disabled={!student || !teacher}
-          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${!student || !teacher ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold ${
+            !student || !teacher ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           Dodaj uwagę
         </button>
 
         {message && (
-          <div className={isError ? "text-red-600 mt-2" : "text-green-600 mt-2"}>
+          <div
+            className={`mt-2 font-bold ${
+              isError ? "text-red-600" : "text-green-600"
+            }`}
+          >
             {message}
           </div>
         )}

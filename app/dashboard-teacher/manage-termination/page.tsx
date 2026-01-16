@@ -19,30 +19,27 @@ const classes = [
   "1 liceum","2 liceum","3 liceum","4 liceum","klasa maturalna"
 ];
 
+/* ✅ JEDNA WSPÓLNA LISTA PRZEDMIOTÓW */
+const SUBJECTS = [
+  "Matematyka",
+  "Język polski",
+  "Geografia",
+  "Biologia",
+  "Fizyka",
+  "Chemia",
+  "Historia",
+  "Język angielski",
+  "Doradztwo zawodowe",
+  "Wychowanie fizyczne",
+  "Zajęcia opiekuńczo-wychowawcze",
+];
+
 export default function TeacherTermsPage() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
-
-  const subjectsPerClass: Record<string, string[]> = {
-    "0": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "1": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "2": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "3": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "4": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "5": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "6": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "7": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "8": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "1 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "2 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "3 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "4 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "klasa maturalna": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-  };
 
   useEffect(() => {
     fetch("/api/me")
@@ -53,7 +50,7 @@ export default function TeacherTermsPage() {
 
   const handleCheckTerms = async () => {
     if (!selectedClass) return;
-    setSubjects(subjectsPerClass[selectedClass] || []);
+
     try {
       const res = await fetch(`/api/teacher/terms?class=${selectedClass}`);
       const data = await res.json();
@@ -65,92 +62,131 @@ export default function TeacherTermsPage() {
 
   const handleDeleteEvent = async (eventId: string) => {
     try {
-      const res = await fetch(`/api/teacher/terms?eventId=${eventId}`, { method: "DELETE" });
+      const res = await fetch(
+        `/api/teacher/terms?eventId=${eventId}`,
+        { method: "DELETE" }
+      );
       if (res.ok) handleCheckTerms();
-    } catch (err) {
-      console.error(err);
-    }
+    } catch {}
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6">
+    <div className="min-h-screen bg-yellow-200 p-6 font-semibold text-black">
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <div className="text-lg font-bold">Terminarz wydarzeń</div>
+        <div className="text-lg font-bold text-black">
+          Terminarz wydarzeń
+        </div>
+
         <div className="flex items-center gap-4">
-          <span>Zalogowano jako: {userName}</span>
-          <button onClick={() => router.push("/account-settings")} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Ustawienia konta</button>
-          <button onClick={() => router.push("/logout")} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Wyloguj się</button>
+          <span className="font-semibold text-black">
+            Zalogowano jako: {userName}
+          </span>
+
+          <button
+            onClick={() => router.push("/account-settings")}
+            className="bg-blue-500 text-white font-bold px-3 py-1 rounded hover:bg-blue-600"
+          >
+            Ustawienia konta
+          </button>
+
+          <button
+            onClick={() => router.push("/logout")}
+            className="bg-red-500 text-white font-bold px-3 py-1 rounded hover:bg-red-600"
+          >
+            Wyloguj się
+          </button>
         </div>
       </div>
 
+      {/* FILTRY */}
       <div className="mb-4 flex gap-4 items-center">
-        <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="p-2 rounded border">
+        <select
+          value={selectedClass}
+          onChange={e => setSelectedClass(e.target.value)}
+          className="p-2 rounded border font-semibold text-black"
+        >
           <option value="">Wybierz klasę</option>
-          {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
+          {classes.map(cls => (
+            <option key={cls} value={cls}>{cls}</option>
+          ))}
         </select>
 
         <button
           onClick={handleCheckTerms}
           disabled={!selectedClass}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300"
+          className="bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300"
         >
           Sprawdź terminarz
         </button>
 
-        {subjects.length > 0 && (
-          <>
-            <select value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="p-2 rounded border">
-              <option value="">Wybierz przedmiot</option>
-              {subjects.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-            </select>
+        <select
+          value={selectedSubject}
+          onChange={e => setSelectedSubject(e.target.value)}
+          className="p-2 rounded border font-semibold text-black"
+        >
+          <option value="">Wybierz przedmiot</option>
+          {SUBJECTS.map(sub => (
+            <option key={sub} value={sub}>{sub}</option>
+          ))}
+        </select>
 
-            {selectedSubject && (
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                onClick={() => router.push(`/dashboard-teacher/manage-termination/add-term/?subject/${selectedSubject}`)}
-              >
-                Dodaj
-              </button>
-            )}
-          </>
+        {selectedSubject && (
+          <button
+            className="bg-green-500 text-white font-bold px-4 py-2 rounded hover:bg-green-600"
+            onClick={() =>
+              router.push(
+                `/dashboard-teacher/manage-termination/add-term/?subject=${selectedSubject}`
+              )
+            }
+          >
+            Dodaj
+          </button>
         )}
       </div>
 
-      <table className="w-full border-collapse border border-gray-400 bg-white">
+      {/* TABELA */}
+      <table className="w-full border-collapse border border-gray-400 bg-white font-semibold text-black">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border px-2 py-1">Data</th>
-            <th className="border px-2 py-1">Przedmiot</th>
-            <th className="border px-2 py-1">Kategoria</th>
-            <th className="border px-2 py-1">Tytuł</th>
-            <th className="border px-2 py-1">Treść</th>
-            <th className="border px-2 py-1">Nauczyciel</th>
-            <th className="border px-2 py-1">Akcja</th>
+            <th className="border px-2 py-1 font-bold">Data</th>
+            <th className="border px-2 py-1 font-bold">Przedmiot</th>
+            <th className="border px-2 py-1 font-bold">Kategoria</th>
+            <th className="border px-2 py-1 font-bold">Tytuł</th>
+            <th className="border px-2 py-1 font-bold">Treść</th>
+            <th className="border px-2 py-1 font-bold">Nauczyciel</th>
+            <th className="border px-2 py-1 font-bold">Akcja</th>
           </tr>
         </thead>
         <tbody>
           {events.length === 0 ? (
-            <tr><td colSpan={7} className="text-center py-4">Brak wydarzeń</td></tr>
-          ) : events.map(ev => (
-            <tr key={ev._id}>
-              <td className="border px-2 py-1">{ev.date}</td>
-              <td className="border px-2 py-1">{ev.subject}</td>
-              <td className="border px-2 py-1">{ev.category}</td>
-              <td className="border px-2 py-1">{ev.title}</td>
-              <td className="border px-2 py-1">{ev.content}</td>
-              <td className="border px-2 py-1">{ev.senderName}</td>
-              <td className="border px-2 py-1">
-                {ev.canDelete && (
-                  <button
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                    onClick={() => handleDeleteEvent(ev._id)}
-                  >
-                    Usuń
-                  </button>
-                )}
+            <tr>
+              <td colSpan={7} className="text-center py-4 font-semibold">
+                Brak wydarzeń
               </td>
             </tr>
-          ))}
+          ) : (
+            events.map(ev => (
+              <tr key={ev._id}>
+                <td className="border px-2 py-1">{ev.date}</td>
+                <td className="border px-2 py-1">{ev.subject}</td>
+                <td className="border px-2 py-1">{ev.category}</td>
+                <td className="border px-2 py-1">{ev.title}</td>
+                <td className="border px-2 py-1">{ev.content}</td>
+                <td className="border px-2 py-1">{ev.senderName}</td>
+                <td className="border px-2 py-1">
+                  {ev.canDelete && (
+                    <button
+                      className="bg-red-500 text-white font-bold px-2 py-1 rounded hover:bg-red-600"
+                      onClick={() => handleDeleteEvent(ev._id)}
+                    >
+                      Usuń
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

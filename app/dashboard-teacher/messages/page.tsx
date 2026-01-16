@@ -62,12 +62,8 @@ export default function TeacherMessagesPage() {
     }
   }, []);
 
-  // Wywołanie fetchInbox przy mount
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchInbox();
-    };
-    fetchData();
+    fetchInbox();
   }, [fetchInbox]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -101,7 +97,7 @@ export default function TeacherMessagesPage() {
       setTitle("");
       setContent("");
       setSelectedRecipient("");
-      fetchInbox(); // odśwież skrzynkę
+      fetchInbox();
     } catch (err) {
       console.error(err);
       setStatusMessage("Błąd serwera");
@@ -109,27 +105,27 @@ export default function TeacherMessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6 flex gap-6">
+    <div className="min-h-screen bg-yellow-200 p-6 flex gap-6 text-black font-semibold">
       {/* Lewa kolumna: formularz */}
       <div className="flex-1 bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-bold mb-4">Wyślij wiadomość</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <h2 className="text-xl font-bold mb-4 text-black">Wyślij wiadomość</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 font-semibold text-black">
           <div>
-            <label className="block mb-1 font-semibold">Nadawca</label>
+            <label className="block mb-1 font-semibold text-black">Nadawca</label>
             <input
               type="text"
               value={userName}
               readOnly
-              className="p-2 rounded border w-full bg-gray-100"
+              className="p-2 rounded border w-full bg-gray-100 font-semibold text-black"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Odbiorca</label>
+            <label className="block mb-1 font-semibold text-black">Odbiorca</label>
             <select
               value={selectedRecipient}
               onChange={(e) => setSelectedRecipient(e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded font-semibold text-black"
               required
             >
               <option value="">Wybierz</option>
@@ -142,33 +138,33 @@ export default function TeacherMessagesPage() {
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Data</label>
+            <label className="block mb-1 font-semibold text-black">Data</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="p-2 rounded border w-full"
+              className="p-2 rounded border w-full font-semibold text-black"
               required
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Tytuł</label>
+            <label className="block mb-1 font-semibold text-black">Tytuł</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="p-2 rounded border w-full"
+              className="p-2 rounded border w-full font-semibold text-black"
               required
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Treść wiadomości</label>
+            <label className="block mb-1 font-semibold text-black">Treść wiadomości</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="p-2 rounded border w-full"
+              className="p-2 rounded border w-full font-semibold text-black"
               rows={5}
               required
             />
@@ -176,27 +172,32 @@ export default function TeacherMessagesPage() {
 
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold"
           >
             Wyślij wiadomość
           </button>
-          {statusMessage && <div className="text-green-600 mt-2">{statusMessage}</div>}
+
+          {statusMessage && (
+            <div className={`mt-2 font-bold ${statusMessage.includes("Błąd") ? "text-red-600" : "text-green-600"}`}>
+              {statusMessage}
+            </div>
+          )}
         </form>
       </div>
 
       {/* Prawa kolumna: odebrane wiadomości */}
-      <div className="flex-1 bg-white p-6 rounded shadow overflow-auto max-h-screen">
-        <h2 className="text-xl font-bold mb-4">Odebrane wiadomości</h2>
+      <div className="flex-1 bg-white p-6 rounded shadow overflow-auto max-h-screen font-semibold text-black">
+        <h2 className="text-xl font-bold mb-4 text-black">Odebrane wiadomości</h2>
         {inbox.length === 0 ? (
-          <p>Brak wiadomości</p>
+          <p className="text-black font-semibold">Brak wiadomości</p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-4 font-semibold text-black">
             {inbox.map((msg) => (
-              <li key={msg._id} className="border p-2 rounded bg-gray-50">
-                <p><b>Nadawca:</b> {msg.senderName}</p>
-                <p><b>Data:</b> {msg.date}</p>
-                <p><b>Tytuł:</b> {msg.title}</p>
-                <p><b>Treść:</b> {msg.content}</p>
+              <li key={msg._id} className="border p-2 rounded bg-gray-50 font-semibold text-black">
+                <p><b className="font-bold">Nadawca:</b> {msg.senderName}</p>
+                <p><b className="font-bold">Data:</b> {msg.date}</p>
+                <p><b className="font-bold">Tytuł:</b> {msg.title}</p>
+                <p><b className="font-bold">Treść:</b> {msg.content}</p>
               </li>
             ))}
           </ul>

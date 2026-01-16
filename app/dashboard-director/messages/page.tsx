@@ -29,21 +29,31 @@ export default function TeacherMessagesPage() {
 
   // Pobierz zalogowanego nauczyciela
   useEffect(() => {
-    fetch("/api/me")
-      .then(res => res.json())
-      .then(data => setUserName(`${data.name} ${data.surname}`))
-      .catch(() => setUserName(""));
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/me");
+        const data = await res.json();
+        setUserName(`${data.name} ${data.surname}`);
+      } catch {
+        setUserName("");
+      }
+    };
+    fetchUser();
   }, []);
 
   // Pobierz odbiorców z tej samej szkoły
   useEffect(() => {
-    fetch("/api/users/recipients-school/teacher")
-      .then(res => res.json())
-      .then(data => {
+    const fetchRecipients = async () => {
+      try {
+        const res = await fetch("/api/users/recipients-school/teacher");
+        const data = await res.json();
         if (data && Array.isArray(data.users)) setRecipients(data.users);
         else setRecipients([]);
-      })
-      .catch(() => setRecipients([]));
+      } catch {
+        setRecipients([]);
+      }
+    };
+    fetchRecipients();
   }, []);
 
   // Pobierz odebrane wiadomości
@@ -58,6 +68,7 @@ export default function TeacherMessagesPage() {
     }
   };
 
+  // Efekt do fetchInbox
   useEffect(() => {
     fetchInbox();
   }, []);
@@ -92,7 +103,7 @@ export default function TeacherMessagesPage() {
       setTitle("");
       setContent("");
       setSelectedRecipient("");
-      fetchInbox(); // odśwież skrzynkę
+      await fetchInbox(); // odśwież skrzynkę
     } catch {
       setStatusMessage("Błąd serwera");
     }

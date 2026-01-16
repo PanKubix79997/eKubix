@@ -43,11 +43,10 @@ export default function ManageAttendancePage() {
   const [statusMessage, setStatusMessage] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
-  // Pobierz dane zalogowanego nauczyciela
   useEffect(() => {
     fetch("/api/me", { credentials: "include" })
       .then(res => res.json())
-      .then(data => setUserName(`${data.name} ${data.surname}`)) // 👈 imię i nazwisko
+      .then(data => setUserName(`${data.name} ${data.surname}`))
       .catch(() => setUserName(""));
   }, []);
 
@@ -76,7 +75,12 @@ export default function ManageAttendancePage() {
       const res = await fetch("/api/teacher/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ selectedClass, subject: selectedSubject, date, studentsAttendance }),
+        body: JSON.stringify({
+          selectedClass,
+          subject: selectedSubject,
+          date,
+          studentsAttendance,
+        }),
       });
       const data = await res.json();
       setStatusMessage(data.message);
@@ -92,14 +96,27 @@ export default function ManageAttendancePage() {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6">
+    <div className="min-h-screen bg-yellow-200 p-6 font-semibold text-black">
       <div className="flex justify-between items-center mb-6">
-        <div className="text-lg font-bold">Sprawdź frekwencję</div>
+        <div className="text-lg font-bold text-black">
+          Sprawdź frekwencję
+        </div>
+
         <div className="flex items-center gap-4">
-          <span>Zalogowano jako: {userName}</span>
+          <span className="font-semibold text-black">
+            Zalogowano jako: {userName}
+          </span>
+
+          <button
+            onClick={() => router.push("/account-settings")}
+            className="bg-blue-500 text-white font-bold px-3 py-1 rounded hover:bg-blue-600"
+          >
+            Ustawienia konta
+          </button>
+
           <button
             onClick={() => router.push("/logout")}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+            className="bg-red-500 text-white font-bold px-3 py-1 rounded hover:bg-red-600"
           >
             Wyloguj się
           </button>
@@ -110,7 +127,7 @@ export default function ManageAttendancePage() {
         <select
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
         >
           <option value="">Wybierz klasę</option>
           {classes.map((cls) => (
@@ -123,7 +140,7 @@ export default function ManageAttendancePage() {
         <select
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
         >
           <option value="">Wybierz przedmiot</option>
           {subjects.map((subj) => (
@@ -137,24 +154,24 @@ export default function ManageAttendancePage() {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="p-2 rounded border"
+          className="p-2 rounded border font-semibold text-black"
         />
 
         <button
           onClick={handleCheckStudents}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600"
         >
           Sprawdź uczniów
         </button>
       </div>
 
       {students.length > 0 && (
-        <table className="w-full border-collapse border border-gray-400 bg-white">
+        <table className="w-full border-collapse border border-gray-400 bg-white font-semibold text-black">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border px-2 py-1">Imię</th>
-              <th className="border px-2 py-1">Nazwisko</th>
-              <th className="border px-2 py-1">Frekwencja</th>
+              <th className="border px-2 py-1 font-bold">Imię</th>
+              <th className="border px-2 py-1 font-bold">Nazwisko</th>
+              <th className="border px-2 py-1 font-bold">Frekwencja</th>
             </tr>
           </thead>
           <tbody>
@@ -164,12 +181,17 @@ export default function ManageAttendancePage() {
                 <td className="border px-2 py-1">{s.surname}</td>
                 <td className="border px-2 py-1 flex gap-2 flex-wrap">
                   {statusOptions.map((status) => (
-                    <label key={status} className="flex items-center gap-1">
+                    <label
+                      key={status}
+                      className="flex items-center gap-1 font-semibold"
+                    >
                       <input
                         type="radio"
                         name={`attendance-${s._id}`}
                         checked={s.attendance === status}
-                        onChange={() => handleStatusChange(s._id, status)}
+                        onChange={() =>
+                          handleStatusChange(s._id, status)
+                        }
                       />
                       {status}
                     </label>
@@ -185,14 +207,18 @@ export default function ManageAttendancePage() {
         <div className="mt-4">
           <button
             onClick={handleSaveAttendance}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="bg-green-500 text-white font-bold px-4 py-2 rounded hover:bg-green-600"
           >
             Zapisz frekwencję
           </button>
         </div>
       )}
 
-      {statusMessage && <div className="mt-4 text-lg text-center">{statusMessage}</div>}
+      {statusMessage && (
+        <div className="mt-4 text-lg text-center font-semibold text-black">
+          {statusMessage}
+        </div>
+      )}
     </div>
   );
 }

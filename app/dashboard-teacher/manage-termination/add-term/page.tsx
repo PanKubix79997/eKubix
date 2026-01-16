@@ -8,10 +8,32 @@ const classes = [
   "1 liceum","2 liceum","3 liceum","4 liceum","klasa maturalna"
 ];
 
-const categories = ["Sprawdzian", "Kartkówka", "Odpowiedź ustna", "Przygotowanie do lekcji", "Inny"];
+const categories = [
+  "Sprawdzian",
+  "Kartkówka",
+  "Odpowiedź ustna",
+  "Przygotowanie do lekcji",
+  "Inny"
+];
+
+// ✅ JEDNA LISTA PRZEDMIOTÓW
+const SUBJECTS = [
+  "Matematyka",
+  "Język polski",
+  "Język angielski",
+  "Historia",
+  "Geografia",
+  "Biologia",
+  "Chemia",
+  "Fizyka",
+  "Wychowanie fizyczne",
+  "Doradztwo zawodowe",
+  "Zajęcia opiekuńczo-wychowawcze"
+];
 
 export default function AddTermPage() {
   const router = useRouter();
+
   const [userName, setUserName] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [subjects, setSubjects] = useState<string[]>([]);
@@ -22,33 +44,21 @@ export default function AddTermPage() {
   const [content, setContent] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
-  const subjectsPerClass: Record<string, string[]> = {
-    "0": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "1": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "2": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "3": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "4": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "5": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "6": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "7": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "8": ["Matematyka","Język polski","Geografia","Biologia","Doradztwo zawodowe","Wychowanie fizyczne","Fizyka","Chemia","Zajęcia opiekuńczo-wychowawcze"],
-    "1 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "2 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "3 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "4 liceum": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-    "klasa maturalna": ["Matematyka","Język polski","Fizyka","Chemia","Biologia","Geografia","Historia","Język angielski"],
-  };
-
   useEffect(() => {
     fetch("/api/me")
       .then(res => res.json())
       .then(data => setUserName(`${data.name} ${data.surname}`))
-      .catch(() => setUserName("Nieznany użytkownik"));
+      .catch(() => setUserName(""));
   }, []);
 
+  // ✅ każda klasa → ta sama lista
   useEffect(() => {
-    setSubjects(selectedClass ? subjectsPerClass[selectedClass] : []);
-    setSelectedSubject(""); // reset przedmiotu przy zmianie klasy
+    if (selectedClass) {
+      setSubjects(SUBJECTS);
+    } else {
+      setSubjects([]);
+    }
+    setSelectedSubject("");
   }, [selectedClass]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,8 +75,8 @@ export default function AddTermPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           class: selectedClass,
-          subject: selectedSubject,  // teraz faktyczny przedmiot
-          category,                  // kategoria osobno
+          subject: selectedSubject,
+          category,
           title: title.slice(0, 50),
           content: content.slice(0, 1000),
           date
@@ -81,77 +91,144 @@ export default function AddTermPage() {
 
       setStatusMessage("Wydarzenie dodane pomyślnie");
       setTimeout(() => router.push("/dashboard-teacher/manage-termination"), 1000);
-    } catch (err: any) {
-      if (!navigator.onLine) {
-        setStatusMessage("Brak połączenia z internetem. Spróbuj ponownie.");
-      } else {
-        setStatusMessage("Błąd serwera");
-      }
+    } catch {
+      setStatusMessage("Błąd serwera");
     }
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-6">
+    <div className="min-h-screen bg-yellow-200 p-6 text-black font-semibold">
       <div className="flex justify-between items-center mb-6">
-        <div className="text-lg font-bold">Dodaj wydarzenie do terminarza</div>
-        <div className="flex items-center gap-4">
+        <div className="text-lg font-bold text-black">
+          Dodaj wydarzenie do terminarza
+        </div>
+
+        <div className="flex items-center gap-4 font-semibold text-black">
           <span>Zalogowano jako: {userName}</span>
-          <button onClick={() => router.push("/account-settings")} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Ustawienia konta</button>
-          <button onClick={() => router.push("/logout")} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Wyloguj się</button>
+
+          <button
+            onClick={() => router.push("/account-settings")}
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 font-bold"
+          >
+            Ustawienia konta
+          </button>
+
+          <button
+            onClick={() => router.push("/logout")}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 font-bold"
+          >
+            Wyloguj się
+          </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow max-w-xl mx-auto flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow max-w-xl mx-auto flex flex-col gap-4 text-black font-semibold"
+      >
         <div>
-          <label className="block font-semibold mb-1">Nadawca</label>
-          <input type="text" value={userName} readOnly className="p-2 border w-full rounded bg-gray-100" />
+          <label className="block font-bold mb-1">Nadawca</label>
+          <input
+            type="text"
+            value={userName}
+            readOnly
+            className="p-2 border w-full rounded bg-gray-100 font-semibold text-black"
+          />
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Klasa</label>
-          <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="p-2 border w-full rounded" required>
+          <label className="block font-bold mb-1">Klasa</label>
+          <select
+            value={selectedClass}
+            onChange={e => setSelectedClass(e.target.value)}
+            className="p-2 border w-full rounded font-semibold text-black"
+            required
+          >
             <option value="">Wybierz klasę</option>
-            {classes.map(cls => <option key={cls} value={cls}>{cls}</option>)}
+            {classes.map(cls => (
+              <option key={cls} value={cls}>{cls}</option>
+            ))}
           </select>
         </div>
 
         {subjects.length > 0 && (
           <div>
-            <label className="block font-semibold mb-1">Przedmiot</label>
-            <select value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="p-2 border w-full rounded" required>
+            <label className="block font-bold mb-1">Przedmiot</label>
+            <select
+              value={selectedSubject}
+              onChange={e => setSelectedSubject(e.target.value)}
+              className="p-2 border w-full rounded font-semibold text-black"
+              required
+            >
               <option value="">Wybierz przedmiot</option>
-              {subjects.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+              {subjects.map(sub => (
+                <option key={sub} value={sub}>{sub}</option>
+              ))}
             </select>
           </div>
         )}
 
         <div>
-          <label className="block font-semibold mb-1">Data wydarzenia</label>
-          <input type="date" value={date} onChange={e => setDate(e.target.value)} className="p-2 border w-full rounded" required />
+          <label className="block font-bold mb-1">Data wydarzenia</label>
+          <input
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="p-2 border w-full rounded font-semibold text-black"
+            required
+          />
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Kategoria</label>
-          <select value={category} onChange={e => setCategory(e.target.value)} className="p-2 border w-full rounded" required>
-            {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          <label className="block font-bold mb-1">Kategoria</label>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            className="p-2 border w-full rounded font-semibold text-black"
+            required
+          >
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Tytuł wydarzenia (max 50 znaków)</label>
-          <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="p-2 border w-full rounded" maxLength={50} required />
+          <label className="block font-bold mb-1">Tytuł (max 50)</label>
+          <input
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="p-2 border w-full rounded font-semibold text-black"
+            maxLength={50}
+            required
+          />
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">Treść wydarzenia (max 1000 znaków)</label>
-          <textarea value={content} onChange={e => setContent(e.target.value)} className="p-2 border w-full rounded" rows={5} maxLength={1000} required />
+          <label className="block font-bold mb-1">Treść (max 1000)</label>
+          <textarea
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            className="p-2 border w-full rounded font-semibold text-black"
+            rows={5}
+            maxLength={1000}
+            required
+          />
         </div>
 
-        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold"
+        >
           Dodaj wydarzenie
         </button>
 
-        {statusMessage && <div className="text-center text-green-600 mt-2">{statusMessage}</div>}
+        {statusMessage && (
+          <div className="text-center text-green-600 font-bold mt-2">
+            {statusMessage}
+          </div>
+        )}
       </form>
     </div>
   );

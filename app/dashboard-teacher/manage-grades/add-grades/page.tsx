@@ -3,13 +3,17 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-const gradeOptions = ["1", "2", "3", "4", "5", "6", "+", "-"];
+const gradeOptions = ["1", "2", "3", "4", "5", "6", "+", "-" , "bz" ];
 const categoryOptions = [
   "Odpowiedź ustna",
   "Sprawdzian",
   "Kartkówka",
   "Przygotowanie do lekcji",
-  "Inny"
+  "Inny" ,
+  "proponowana śródroczna" ,
+  "proponowana roczna" ,
+  "Śródroczna" ,
+  "roczna"
 ];
 
 export default function AddGradesPage() {
