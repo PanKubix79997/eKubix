@@ -1,135 +1,90 @@
-"use client";
+type PageProps = {
+  searchParams: {
+    studentId?: string;
+    class?: string;
+    subject?: string;
+  };
+};
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-
-const gradeOptions = ["1", "2", "3", "4", "5", "6", "+", "-" , "bz" ];
+const gradeOptions = ["1", "2", "3", "4", "5", "6", "+", "-", "bz"];
 const categoryOptions = [
   "Odpowiedź ustna",
   "Sprawdzian",
   "Kartkówka",
   "Przygotowanie do lekcji",
-  "Inny" ,
-  "proponowana śródroczna" ,
-  "proponowana roczna" ,
-  "Śródroczna" ,
-  "roczna"
+  "Inny",
+  "proponowana śródroczna",
+  "proponowana roczna",
+  "Śródroczna",
+  "roczna",
 ];
 
-export default function AddGradesPage() {
-  const searchParams = useSearchParams();
-  const studentId = searchParams.get("studentId") || "";
-  const studentClass = searchParams.get("class") || "";
-  const subject = searchParams.get("subject") || "";
+export default function AddGradesPage({ searchParams }: PageProps) {
+  const studentId = searchParams.studentId ?? "";
+  const studentClass = searchParams.class ?? "";
+  const subject = searchParams.subject ?? "";
 
-  const [grade, setGrade] = useState("");
-  const [category, setCategory] = useState(categoryOptions[0]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
+  async function addGrade(formData: FormData) {
+    "use server";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/grades/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId,
-          class: studentClass,
-          subject,
-          grade,
-          category,
-          title,
-          content,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setStatusMessage("Ocena dodana pomyślnie!");
-        setGrade("");
-        setCategory(categoryOptions[0]);
-        setTitle("");
-        setContent("");
-      } else {
-        setStatusMessage(data.message || "Błąd serwera");
-      }
-    } catch {
-      setStatusMessage("Błąd serwera");
-    }
-  };
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/grades/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        studentId,
+        class: studentClass,
+        subject,
+        grade: formData.get("grade"),
+        category: formData.get("category"),
+        title: formData.get("title"),
+        content: formData.get("content"),
+      }),
+    });
+  }
 
   return (
     <div className="min-h-screen bg-yellow-200 flex items-center justify-center p-6">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-2xl font-bold text-black mb-6 text-center">
           Dodaj ocenę dla ucznia
         </h1>
 
-        {statusMessage && (
-          <div className="mb-4 p-2 rounded bg-green-200 text-green-800">
-            {statusMessage}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form action={addGrade} className="flex flex-col gap-4">
           <div>
-            <label className="block mb-1 font-semibold">Ocena</label>
-            <select
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            >
+            <label className="block mb-1 font-bold text-black">Ocena</label>
+            <select name="grade" required className="border p-2 rounded w-full">
               <option value="">Wybierz</option>
-              {gradeOptions.map((g) => (
+              {gradeOptions.map(g => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Kategoria</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            >
-              {categoryOptions.map((c) => (
+            <label className="block mb-1 font-bold text-black">Kategoria</label>
+            <select name="category" required className="border p-2 rounded w-full">
+              {categoryOptions.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Tytuł oceny</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
+            <label className="block mb-1 font-bold text-black">Tytuł</label>
+            <input name="title" required className="border p-2 rounded w-full" />
           </div>
 
           <div>
-            <label className="block mb-1 font-semibold">Treść oceny</label>
+            <label className="block mb-1 font-bold text-black">Treść</label>
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              rows={4}
+              name="content"
               required
+              rows={4}
+              className="border p-2 rounded w-full"
             />
           </div>
 
-          <button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
-          >
+          <button className="bg-blue-500 text-white font-bold p-2 rounded">
             Dodaj ocenę
           </button>
         </form>
