@@ -14,7 +14,16 @@ const subjectsList = [
   "Wychowanie fizyczne",
   "Zajęcia opiekuńczo-wychowawcze",
   "Fizyka",
-  "Chemia"
+  "Chemia" ,
+  "edukacja do bezpieczeństwa" ,
+  "wiedza o społeczeńswie" ,
+  "Muzyka" ,
+  "PLastyka" ,
+  "zajęcia Wyrównawcze" ,
+  "zajęcia dodatkowe" ,
+  "Informatyka" ,
+  "język angielski" ,
+  "język niemiecki"
 ];
 
 const classesList = [
@@ -116,7 +125,7 @@ export default function AddUserPage() {
 
   /* ===================== UI ===================== */
   return (
-    <div className="min-h-screen bg-yellow-200 flex items-center justify-center">
+    <div className="min-h-screen bg-yellow-200 flex items-center justify-center font-semibold text-black">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Dodaj nowego użytkownika
@@ -124,7 +133,7 @@ export default function AddUserPage() {
 
         {message && (
           <div
-            className={`mb-4 p-2 rounded ${
+            className={`mb-4 p-2 rounded font-bold ${
               success
                 ? "bg-green-200 text-green-800"
                 : "bg-red-200 text-red-800"
@@ -141,7 +150,7 @@ export default function AddUserPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="border p-2 rounded"
+            className="border p-2 rounded font-bold"
           />
 
           <input
@@ -150,7 +159,7 @@ export default function AddUserPage() {
             value={surname}
             onChange={(e) => setSurname(e.target.value)}
             required
-            className="border p-2 rounded"
+            className="border p-2 rounded font-bold"
           />
 
           <select
@@ -159,7 +168,7 @@ export default function AddUserPage() {
               setRole(e.target.value as any);
               if (e.target.value === "admin") setSchool("");
             }}
-            className="border p-2 rounded"
+            className="border p-2 rounded font-bold"
           >
             <option value="student">Student</option>
             <option value="teacher">Nauczyciel</option>
@@ -173,7 +182,7 @@ export default function AddUserPage() {
             value={login}
             onChange={(e) => setLogin(e.target.value)}
             required
-            className="border p-2 rounded"
+            className="border p-2 rounded font-bold"
           />
 
           <input
@@ -182,7 +191,7 @@ export default function AddUserPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="border p-2 rounded"
+            className="border p-2 rounded font-bold"
           />
 
           {/* SZKOŁA – ZNIKA DLA ADMINA */}
@@ -193,7 +202,7 @@ export default function AddUserPage() {
               value={school}
               onChange={(e) => setSchool(e.target.value)}
               required
-              className="border p-2 rounded"
+              className="border p-2 rounded font-bold"
             />
           )}
 
@@ -201,10 +210,10 @@ export default function AddUserPage() {
           {role === "student" && (
             <>
               <div>
-                <label className="font-semibold">Przedmioty</label>
-                <div className="flex flex-wrap gap-2 border p-2 rounded max-h-40 overflow-auto">
+                <label className="font-bold">Przedmioty</label>
+                <div className="flex flex-wrap gap-2 border p-2 rounded max-h-40 overflow-auto font-bold">
                   {subjectsList.map((s) => (
-                    <label key={s} className="flex items-center gap-1">
+                    <label key={s} className="flex items-center gap-1 font-bold">
                       <input
                         type="checkbox"
                         checked={selectedSubjects.includes(s)}
@@ -217,14 +226,14 @@ export default function AddUserPage() {
               </div>
 
               <div>
-                <label className="font-semibold">Klasa</label>
+                <label className="font-bold">Klasa</label>
                 <select
                   value={selectedClass}
                   onChange={(e) => setSelectedClass(e.target.value)}
-                  className="border p-2 rounded w-full"
+                  className="border p-2 rounded w-full font-bold"
                 >
                   {classesList.map((cls) => (
-                    <option key={cls} value={cls}>
+                    <option key={cls} value={cls} className="font-bold">
                       {cls}
                     </option>
                   ))}
@@ -235,7 +244,7 @@ export default function AddUserPage() {
 
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-bold"
           >
             Dodaj użytkownika
           </button>

@@ -82,21 +82,27 @@ export default function CheckSupportPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-yellow-200">
+    <div className="min-h-screen flex flex-col bg-yellow-200 font-semibold text-black">
       {/* HEADER */}
-      <header className="flex justify-between items-center p-4 bg-yellow-300">
-        <h1 className="text-xl font-bold">Panel administracyjny – Zgłoszenia wsparcia</h1>
+      <header className="flex justify-between items-center p-4 bg-yellow-300 font-bold">
+        <h1 className="text-xl">Panel administracyjny – Zgłoszenia wsparcia</h1>
 
         <div className="flex items-center gap-4">
-          <span className="text-sm">
+          <span className="text-sm font-bold">
             Zalogowano jako: <b>{currentAdmin.name} {currentAdmin.surname}</b>
           </span>
 
-          <button onClick={() => router.push("/account-settings")} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+          <button 
+            onClick={() => router.push("/account-settings")} 
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 font-bold"
+          >
             Ustawienia konta
           </button>
 
-          <button onClick={() => router.push("/logout")} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+          <button 
+            onClick={() => router.push("/logout")} 
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 font-bold"
+          >
             Wyloguj się
           </button>
         </div>
@@ -105,15 +111,15 @@ export default function CheckSupportPage() {
       {/* CONTENT */}
       <main className="flex-1 p-6">
         {loading ? (
-          <p>Ładowanie zgłoszeń...</p>
+          <p className="font-bold">Ładowanie zgłoszeń...</p>
         ) : error ? (
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-600 font-bold">{error}</p>
         ) : tickets.length === 0 ? (
-          <p>Brak zgłoszeń</p>
+          <p className="font-bold">Brak zgłoszeń</p>
         ) : (
           <div className="space-y-4">
             {tickets.map(ticket => (
-              <div key={ticket._id} className="bg-white p-4 rounded shadow border flex flex-col gap-2">
+              <div key={ticket._id} className="bg-white p-4 rounded shadow border flex flex-col gap-2 font-bold">
                 <div className="flex justify-between items-start">
                   <div>
                     <p><b>Imię i nazwisko:</b> {ticket.firstName} {ticket.lastName}</p>
@@ -148,14 +154,14 @@ export default function CheckSupportPage() {
                     🗑️
                   </button>
                 </div>
-                <p className="text-xs text-gray-500">Utworzono: {new Date(ticket.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-gray-500 font-bold">Utworzono: {new Date(ticket.createdAt).toLocaleString()}</p>
               </div>
             ))}
           </div>
         )}
       </main>
 
-      <footer className="border-t text-center p-4 bg-yellow-300">
+      <footer className="border-t text-center p-4 bg-yellow-300 font-bold">
         eKubix © – wszelkie prawa zastrzeżone
       </footer>
     </div>

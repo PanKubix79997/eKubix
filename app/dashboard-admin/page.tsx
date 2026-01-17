@@ -37,14 +37,14 @@ export default function DashboardAdmin() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-yellow-200">
+    <div className="min-h-screen flex flex-col bg-yellow-200 font-semibold text-black">
       {/* HEADER */}
-      <header className="flex justify-between items-center p-4 bg-yellow-300">
+      <header className="flex justify-between items-center p-4 bg-yellow-300 font-bold">
         <h1 className="text-xl font-bold">
           Witaj w dashboardzie administratora
         </h1>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 font-semibold">
           {loading ? (
             <span className="text-sm">Ładowanie danych...</span>
           ) : error ? (
@@ -57,14 +57,14 @@ export default function DashboardAdmin() {
 
           <button
             onClick={() => router.push("/account-settings")}
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 font-bold"
           >
             Ustawienia konta
           </button>
 
           <button
             onClick={() => router.push("/logout")}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 font-bold"
           >
             Wyloguj się
           </button>
@@ -72,15 +72,15 @@ export default function DashboardAdmin() {
       </header>
 
       {/* CONTENT */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 font-semibold">
         {error && !loading && (
-          <div className="mb-4 text-red-600">{error}</div>
+          <div className="mb-4 text-red-600 font-bold">{error}</div>
         )}
 
         <div className="flex flex-col gap-4 max-w-md">
           <button
             onClick={() => router.push("/dashboard-admin/admin-panel")}
-            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600 font-bold"
           >
             Panel administracyjny
           </button>
@@ -88,7 +88,7 @@ export default function DashboardAdmin() {
           {/* Nowy przycisk wyczyszczenia dziennika */}
           <button
             onClick={() => router.push("/dashboard-admin/clear-ekubix")}
-            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600 font-bold"
           >
             Wyczyść dziennik eKubix
           </button>
@@ -96,7 +96,7 @@ export default function DashboardAdmin() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t text-center p-4 bg-yellow-300">
+      <footer className="border-t text-center p-4 bg-yellow-300 font-semibold">
         eKubix © – wszelkie prawa zastrzeżone
       </footer>
     </div>

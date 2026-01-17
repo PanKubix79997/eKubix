@@ -53,27 +53,27 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-200 p-8">
+    <div className="min-h-screen bg-yellow-200 p-8 font-semibold text-black">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Panel administracyjny</h1>
 
         <button
           onClick={() => router.push("/dashboard-admin/admin-panel/add-user")}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold"
         >
           Dodaj konto
         </button>
       </div>
 
       {message && (
-        <div className="mb-4 p-2 bg-green-200 text-green-800 rounded">
+        <div className="mb-4 p-2 bg-green-200 text-green-800 rounded font-bold">
           {message}
         </div>
       )}
 
       <table className="w-full border border-gray-300 rounded bg-white">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-100 font-bold">
           <tr>
             <th className="p-2 border">Imię</th>
             <th className="p-2 border">Nazwisko</th>
@@ -84,14 +84,14 @@ export default function AdminPanel() {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user._id} className="bg-gray-50">
+            <tr key={user._id} className="bg-gray-50 font-semibold">
               <td className="p-2 border">{user.name}</td>
               <td className="p-2 border">{user.surname}</td>
               <td className="p-2 border">{user.login}</td>
               <td className="p-2 border">{user.role}</td>
               <td className="p-2 border">
                 <button
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 font-bold"
                   onClick={() => handleDelete(user._id)}
                 >
                   Usuń

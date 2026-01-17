@@ -23,7 +23,6 @@ export default function LoginPage() {
     setMessage("");
     setIsError(false);
 
-    // Brak internetu
     if (!navigator.onLine) {
       setMessage(
         "Wygląda na to, że nie masz połączenia z internetem. Połącz się z internetem i spróbuj ponownie."
@@ -65,7 +64,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Sukces
       setMessage("Zalogowano poprawnie. Trwa przekierowanie na dashboard...");
       setIsError(false);
 
@@ -97,27 +95,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-yellow-200">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-yellow-200 font-semibold text-black">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md font-bold">
         <h1 className="text-2xl font-bold mb-6 text-center">Zaloguj się</h1>
 
         {message && (
           <div
             className={`mb-4 p-2 rounded ${
               isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
-            }`}
+            } font-bold`}
           >
             {message}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 font-semibold text-black">
           <input
             type="text"
             placeholder="Login"
             value={login}
             onChange={(e) => setLogin(e.target.value)}
-            className="border p-2 rounded"
+            className="border p-2 rounded font-semibold text-black"
             required
           />
 
@@ -126,13 +124,13 @@ export default function LoginPage() {
             placeholder="Hasło"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 rounded"
+            className="border p-2 rounded font-semibold text-black"
             required
           />
 
           <button
             type="submit"
-            className={`bg-blue-500 text-white p-2 rounded ${
+            className={`bg-blue-500 text-white p-2 rounded font-bold ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={loading}
