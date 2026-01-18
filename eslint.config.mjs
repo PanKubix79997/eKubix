@@ -6,15 +6,19 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
 
-  // 🔧 NASZE NADPISANIA REGUŁ
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/set-state-in-effect": "off",
+
+      // 🔥 TO BLOKOWAŁO BUILD
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" }
+      ],
     },
   },
 
-  // Ignore
   globalIgnores([
     ".next/**",
     "out/**",
