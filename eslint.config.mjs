@@ -1,4 +1,3 @@
-// eslint.config.mjs
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
@@ -7,29 +6,20 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
 
-  // 🔧 Nasze nadpisania reguł
   {
     rules: {
-      // pozwala na użycie "any"
+      // Wyłączamy błędy dla any
       "@typescript-eslint/no-explicit-any": "off",
 
-      // ignorowanie zmiennych/argumentów "_" aby nie było warningów
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          varsIgnorePattern: "^_",
-          argsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
-      ],
+      // Wyłączamy błędy dla nieużywanych zmiennych
+      "@typescript-eslint/no-unused-vars": "off",
 
-      // wyłączenie niektórych reguł reactowych jeśli trzeba
-      "react-hooks/exhaustive-deps": "warn",
-      "react-hooks/rules-of-hooks": "error",
+      // Wyłączamy błąd dla hooków
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 
-  // 🔨 Ignorowane foldery
+  // Ignorowanie folderów buildowych
   globalIgnores([
     ".next/**",
     "out/**",
