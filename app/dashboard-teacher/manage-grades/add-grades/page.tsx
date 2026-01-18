@@ -1,4 +1,3 @@
-// app/dashboard-teacher/manage-grades/add-grades/page.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -17,9 +16,7 @@ const categoryOptions = [
   "roczna",
 ];
 
-export const dynamic = "force-dynamic";
-
-export default function AddGradesPage() {
+export default function AddGradesClient() {
   const searchParams = useSearchParams();
   const studentId = searchParams.get("studentId") || "";
   const studentClass = searchParams.get("class") || "";
@@ -30,10 +27,11 @@ export default function AddGradesPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const grade = formData.get("grade") as string;
-    const category = formData.get("category") as string;
-    const title = formData.get("title") as string;
-    const content = formData.get("content") as string;
+
+    const grade = formData.get("grade");
+    const category = formData.get("category");
+    const title = formData.get("title");
+    const content = formData.get("content");
 
     try {
       const res = await fetch("/api/grades/add", {
@@ -60,7 +58,9 @@ export default function AddGradesPage() {
   return (
     <div className="min-h-screen bg-yellow-200 flex items-center justify-center p-6 font-semibold text-black">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">Dodaj ocenę dla ucznia</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Dodaj ocenę dla ucznia
+        </h1>
 
         {statusMessage && (
           <div className="mb-4 p-2 rounded bg-green-200 text-green-800 font-bold">
@@ -73,7 +73,7 @@ export default function AddGradesPage() {
             <label className="block mb-1 font-bold">Ocena</label>
             <select name="grade" required className="border p-2 rounded w-full font-bold text-black">
               <option value="">Wybierz</option>
-              {gradeOptions.map((g) => (
+              {gradeOptions.map(g => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
@@ -82,7 +82,7 @@ export default function AddGradesPage() {
           <div>
             <label className="block mb-1 font-bold">Kategoria</label>
             <select name="category" required className="border p-2 rounded w-full font-bold text-black">
-              {categoryOptions.map((c) => (
+              {categoryOptions.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
@@ -90,7 +90,7 @@ export default function AddGradesPage() {
 
           <div>
             <label className="block mb-1 font-bold">Tytuł</label>
-            <input name="title" type="text" required className="border p-2 rounded w-full font-bold text-black" />
+            <input name="title" required className="border p-2 rounded w-full font-bold text-black" />
           </div>
 
           <div>
@@ -98,7 +98,7 @@ export default function AddGradesPage() {
             <textarea name="content" rows={4} required className="border p-2 rounded w-full font-bold text-black" />
           </div>
 
-          <button className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600 transition">
+          <button className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600">
             Dodaj ocenę
           </button>
         </form>
